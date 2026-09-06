@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+__pycache__/
+.venv/
+# Keep the committed validation report and screenshot, not local export output.
+test-results/*.celesta.json
+test-results/*-frame-*.png
+test-results/*-frame-*.svg
+test-results/*.html
+test-results/*.zip
+test-results/*.webm
+test-results/*.mp4

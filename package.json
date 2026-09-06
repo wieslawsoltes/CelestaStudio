@@ -1,0 +1,17 @@
+{
+  "name": "celesta-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A dependency-free, WebGPU-first vector animation editor",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "build": "node build.mjs",
+    "start": "python3 -m http.server 8000 --bind 127.0.0.1",
+    "test:browser": "python3 tests/browser_integration.py"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}

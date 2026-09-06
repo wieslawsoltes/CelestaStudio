@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#242429"><meta name="description" content="Celesta — a WebGPU-first vector animation studio. Draw, animate, and bring your ideas to life.">
+  <title>Celesta — Animation, with a little wonder.</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23292539'/%3E%3Cpath d='M44 20a18 18 0 1 0 0 24' fill='none' stroke='%23c5a8ff' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='m46 8 2 7 7 2-7 2-2 7-2-7-7-2 7-2z' fill='%23c5a8ff'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header class="menubar">
+    <a class="brand" href="#" aria-label="Celesta home" id="brand-home"><span class="brand-mark">C<span>✦</span></span><strong>celesta<span class="brand-dot">.</span></strong></a>
+    <nav id="main-menu" aria-label="Application menu"></nav>
+    <div class="header-spacer"></div>
+    <div class="save-state" id="save-state"><span class="status-dot"></span>All changes saved</div>
+    <span class="header-divider"></span>
+    <button class="icon-button" data-action="undo" title="Undo (⌘/Ctrl Z)" aria-label="Undo" data-icon="undo"></button>
+    <button class="icon-button" data-action="redo" title="Redo (⌘/Ctrl Shift Z)" aria-label="Redo" data-icon="redo"></button>
+    <button class="preview-button" data-action="preview"><span data-icon="play"></span>Preview</button>
+    <button class="primary-button export-button" data-action="export"><span data-icon="export"></span>Export<span data-icon="down"></span></button>
+  </header>
+  <div class="document-strip">
+    <div class="document-tab"><span class="file-symbol">Ca</span><span id="document-name">A little space</span><span class="document-dot" id="document-dot"></span><button class="tiny-button" data-action="rename" title="Rename document" aria-label="Rename document" data-icon="more"></button></div>
+    <button class="tab-add" data-action="new" title="New document" aria-label="New document" data-icon="plus"></button>
+    <span class="strip-spacer"></span><span class="workspace-label">Animation workspace</span><span class="workspace-divider"></span><button class="tiny-button" data-action="help" title="Keyboard shortcuts" aria-label="Keyboard shortcuts" data-icon="keyboard"></button>
+  </div>
+  <aside class="toolrail" aria-label="Drawing tools"><div id="drawing-tools"></div><div class="rail-spacer"></div><div class="tool-colors" title="Current drawing colors"><label class="stroke-chip"><input id="rail-stroke" aria-label="Drawing stroke color" type="color" value="#635676"></label><label class="fill-chip"><input id="rail-fill" aria-label="Drawing fill color" type="color" value="#a08ad1"></label></div><button class="tool-button" data-action="swap-colors" title="Swap fill and stroke (X)" aria-label="Swap fill and stroke" data-icon="flip"></button><div class="rail-divider"></div><button class="tool-button" data-action="help" title="Help and shortcuts (?)" aria-label="Help"><span class="help-icon">?</span></button></aside>
+  <main class="workarea">
+    <div class="stage-toolbar"><div class="scene-crumb"><button class="tiny-button hidden" id="leave-symbol" data-action="leave-symbol" title="Return to scene" data-icon="back"></button><span class="scene-icon" data-icon="layer"></span><button id="scene-name" data-action="leave-symbol">Scene 1</button><span class="scene-separator">/</span><span id="stage-dimensions">1280 × 720</span></div><div class="stage-toolbar-spacer"></div><span class="gpu-pill" id="gpu-pill"><span></span><b id="renderer-label">Initializing</b></span><span class="toolbar-divider"></span><button class="tiny-button" data-action="grid" title="Show grid (⌘/Ctrl ')" aria-label="Toggle grid" data-icon="grid" id="grid-button"></button><button class="tiny-button" data-action="fit" title="Fit stage (⌘/Ctrl 0)" aria-label="Fit stage" data-icon="fit"></button><button class="zoom-display" id="zoom-display" data-action="zoom-menu">Fit <span data-icon="down"></span></button></div>
+    <div id="stage-viewport" class="stage-viewport" tabindex="0" aria-label="Animation stage. Use V to select, R for rectangle, O for ellipse, B for brush, P for pen, T for text.">
+      <canvas id="stage-canvas" aria-hidden="true"></canvas><canvas id="overlay-canvas" aria-hidden="true"></canvas>
+      <div class="stage-top-label"><span id="stage-label">SCENE 1</span></div>
+      <div class="stage-bottom-label"><span id="stage-hint">A little curiosity. A lot of possibility.</span><span id="stage-coordinates">X 0 · Y 0</span></div>
+      <div id="drop-overlay" class="drop-overlay hidden"><span data-icon="folder"></span><h2>Bring something into orbit.</h2><p>Drop a project, SVG, PNG, JPEG, or WebP</p></div>
+    </div>
+    <div id="timeline-splitter" class="timeline-splitter" title="Drag to resize timeline" role="separator" aria-orientation="horizontal" tabindex="0"></div>
+    <section class="timeline" id="timeline" aria-label="Animation timeline">
+      <div class="timeline-topbar"><div class="timeline-title">Timeline<span class="tiny-label">SCENE 1</span></div><div class="timeline-top-controls"><button class="tiny-button" data-action="onion" title="Onion skin (Shift O)" aria-label="Toggle onion skin" id="onion-button" data-icon="onion"></button><button class="tiny-button" data-action="motion-path" title="Show motion paths" aria-label="Toggle motion paths" id="motion-path-button" data-icon="tween"></button><span class="toolbar-divider"></span><button class="tiny-button active" data-action="autokey" title="Auto-keyframe on edit" aria-label="Toggle auto keyframe" id="autokey-button" data-icon="key"></button><span class="auto-key-label">Auto key</span></div><div class="timeline-spacer"></div><button class="subtle-button" data-action="keyframe"><span data-icon="plus"></span>Keyframe <kbd>F6</kbd></button><button class="subtle-button tween-button" data-action="tween"><span data-icon="tween"></span>Create tween</button></div>
+      <div class="timeline-track-area" id="timeline-track-area"><canvas id="timeline-canvas" tabindex="0" aria-label="Timeline frames and layers. Click a frame to scrub; double-click a frame to insert a keyframe; drag a keyframe to move it."></canvas></div>
+      <div class="timeline-footer"><div class="layer-actions"><button class="tiny-button" data-action="add-layer" title="New layer" aria-label="New layer" data-icon="plus"></button><button class="tiny-button" data-action="delete-layer" title="Delete layer" aria-label="Delete layer" data-icon="trash"></button><button class="tiny-button" data-action="layer-up" title="Move layer up" aria-label="Move layer up"><span class="up-chevron" data-icon="down"></span></button><button class="tiny-button" data-action="layer-down" title="Move layer down" aria-label="Move layer down" data-icon="down"></button></div><div class="transport"><button class="tiny-button" data-action="first" title="First frame (Home)" aria-label="First frame" data-icon="first"></button><button class="tiny-button" data-action="prev" title="Previous frame (, )" aria-label="Previous frame" data-icon="prev"></button><button class="transport-play" data-action="play" id="play-button" title="Play / pause (Space)" aria-label="Play" data-icon="play"></button><button class="tiny-button" data-action="next" title="Next frame (.)" aria-label="Next frame" data-icon="next"></button><button class="tiny-button" data-action="last" title="Last frame (End)" aria-label="Last frame" data-icon="last"></button><button class="tiny-button active" data-action="loop" title="Loop playback" aria-label="Toggle loop playback" data-icon="loop" id="loop-button"></button></div><div class="time-readout"><input id="frame-input" type="number" min="1" max="96" value="1" aria-label="Current frame"><span>/ <b id="duration-label">96</b></span><span class="footer-dot">·</span><span id="fps-label">24 fps</span></div><div class="timeline-spacer"></div><span id="seconds-label" class="seconds-label">00:00.00</span><button class="tiny-button" data-action="timeline-zoom-out" aria-label="Zoom timeline out" title="Zoom timeline out" data-icon="minus"></button><div class="timeline-zoom-meter"><span id="timeline-zoom-meter"></span></div><button class="tiny-button" data-action="timeline-zoom-in" aria-label="Zoom timeline in" title="Zoom timeline in" data-icon="plus"></button></div>
+    </section>
+  </main>
+  <aside class="inspector"><div class="inspector-tabs" role="tablist"><button class="active" data-panel="properties" role="tab" aria-selected="true">Properties</button><button data-panel="library" role="tab" aria-selected="false">Library<span id="library-count">3</span></button></div><div id="inspector-content" class="inspector-content"></div><div class="inspector-footer"><span class="small-sparkle">✦</span><div>A little motion. Endless possibility.<small>Made for the things you imagine.</small></div></div></aside>
+  <footer class="statusbar"><span class="status-left"><span class="status-tool" id="status-tool">Selection</span><span class="status-sep">|</span><span id="status-hint">Click to select · Shift to add · Drag to move</span></span><div class="status-right"><span id="render-stats">Vector engine ready</span><span class="status-sep">|</span><span class="engine-dot"></span><span>Local-first</span><button data-action="help" class="status-version">CELESTA 1.0</button></div></footer>
+</div>
+<div class="menu-popup hidden" id="menu-popup" role="menu"></div>
+<div id="toast-container" aria-live="polite"></div>
+<dialog id="app-dialog"><div id="dialog-content"></div></dialog>
+<input type="file" id="file-input" hidden accept=".json,.celesta,.svg,.png,.jpg,.jpeg,.webp,.gif">
+<noscript>Celesta requires JavaScript to edit and animate vector artwork.</noscript>
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

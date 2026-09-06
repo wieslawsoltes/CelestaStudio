@@ -1,0 +1,176 @@
+
+> celesta-studio@1.0.0 test
+> node --test tests/*.test.js
+
+TAP version 13
+# Subtest: Affine multiplication and inversion preserve points
+ok 1 - Affine multiplication and inversion preserve points
+  ---
+  duration_ms: 2.063163
+  type: 'test'
+  ...
+# Subtest: Affine decomposition round-trips rotation, skew, scaling and reflection
+ok 2 - Affine decomposition round-trips rotation, skew, scaling and reflection
+  ---
+  duration_ms: 4.929728
+  type: 'test'
+  ...
+# Subtest: Arbitrary composed affine transforms round-trip after grouping
+ok 3 - Arbitrary composed affine transforms round-trip after grouping
+  ---
+  duration_ms: 0.255334
+  type: 'test'
+  ...
+# Subtest: Easing has exact endpoints and finite samples
+ok 4 - Easing has exact endpoints and finite samples
+  ---
+  duration_ms: 0.44677
+  type: 'test'
+  ...
+# Subtest: Color interpolation clamps overshooting curves
+ok 5 - Color interpolation clamps overshooting curves
+  ---
+  duration_ms: 0.975833
+  type: 'test'
+  ...
+# Subtest: Concave polygon tessellation preserves area and winding independence
+ok 6 - Concave polygon tessellation preserves area and winding independence
+  ---
+  duration_ms: 0.539783
+  type: 'test'
+  ...
+# Subtest: Cubic subdivision and freehand simplification are bounded
+ok 7 - Cubic subdivision and freehand simplification are bounded
+  ---
+  duration_ms: 0.412938
+  type: 'test'
+  ...
+# Subtest: Frame lookup returns the preceding key and next key
+ok 8 - Frame lookup returns the preceding key and next key
+  ---
+  duration_ms: 0.276754
+  type: 'test'
+  ...
+# Subtest: Motion tween interpolation preserves IDs and does not mutate keys
+ok 9 - Motion tween interpolation preserves IDs and does not mutate keys
+  ---
+  duration_ms: 0.663472
+  type: 'test'
+  ...
+# Subtest: Auto-keyframe captures an interpolated pose and is idempotent
+ok 10 - Auto-keyframe captures an interpolated pose and is idempotent
+  ---
+  duration_ms: 0.571091
+  type: 'test'
+  ...
+# Subtest: Shape tween interpolates matching Bézier anchors and control handles
+ok 11 - Shape tween interpolates matching Bézier anchors and control handles
+  ---
+  duration_ms: 0.427664
+  type: 'test'
+  ...
+# Subtest: Incompatible path topology holds original anchors while transforming
+ok 12 - Incompatible path topology holds original anchors while transforming
+  ---
+  duration_ms: 0.25847
+  type: 'test'
+  ...
+# Subtest: Overshoot easing cannot create negative dimensions or alpha
+ok 13 - Overshoot easing cannot create negative dimensions or alpha
+  ---
+  duration_ms: 0.195674
+  type: 'test'
+  ...
+# Subtest: Hidden and locked layers participate correctly in rendering and hit testing
+ok 14 - Hidden and locked layers participate correctly in rendering and hit testing
+  ---
+  duration_ms: 0.735486
+  type: 'test'
+  ...
+# Subtest: Symbols inherit affine transforms and opacity
+ok 15 - Symbols inherit affine transforms and opacity
+  ---
+  duration_ms: 0.230989
+  type: 'test'
+  ...
+# Subtest: Transactional history coalesces drags, ignores no-ops, supports cancel/undo/redo
+ok 16 - Transactional history coalesces drags, ignores no-ops, supports cancel/undo/redo
+  ---
+  duration_ms: 0.386288
+  type: 'test'
+  ...
+# Subtest: History bounds entry count
+ok 17 - History bounds entry count
+  ---
+  duration_ms: 0.399302
+  type: 'test'
+  ...
+# Subtest: Demo round-trips through strict project validation
+ok 18 - Demo round-trips through strict project validation
+  ---
+  duration_ms: 28.100102
+  type: 'test'
+  ...
+# Subtest: Validation rejects recursive symbols, duplicate keys, and foreign executable content
+ok 19 - Validation rejects recursive symbols, duplicate keys, and foreign executable content
+  ---
+  duration_ms: 0.896345
+  type: 'test'
+  ...
+# Subtest: Validation rejects ambiguous object identifiers across layers
+ok 20 - Validation rejects ambiguous object identifiers across layers
+  ---
+  duration_ms: 0.309926
+  type: 'test'
+  ...
+# Subtest: SVG path parser supports relative lines, cubics, smooth and quadratic curves
+ok 21 - SVG path parser supports relative lines, cubics, smooth and quadratic curves
+  ---
+  duration_ms: 0.9634
+  type: 'test'
+  ...
+# Subtest: SVG elliptical arcs become cubic segments with correct endpoints
+ok 22 - SVG elliptical arcs become cubic segments with correct endpoints
+  ---
+  duration_ms: 0.424048
+  type: 'test'
+  ...
+# Subtest: SVG path parser rejects malformed and unknown commands
+ok 23 - SVG path parser rejects malformed and unknown commands
+  ---
+  duration_ms: 0.181387
+  type: 'test'
+  ...
+# Subtest: Path normalization preserves document coordinates
+ok 24 - Path normalization preserves document coordinates
+  ---
+  duration_ms: 0.201054
+  type: 'test'
+  ...
+# Subtest: SVG export escapes content and emits geometry, text, gradients and a clip
+ok 25 - SVG export escapes content and emits geometry, text, gradients and a clip
+  ---
+  duration_ms: 2.248197
+  type: 'test'
+  ...
+# Subtest: Animated HTML is complete, parseable, self-contained and script-safe
+ok 26 - Animated HTML is complete, parseable, self-contained and script-safe
+  ---
+  duration_ms: 2.434512
+  type: 'test'
+  ...
+# Subtest: ZIP CRC32 and local/central headers are correct
+ok 27 - ZIP CRC32 and local/central headers are correct
+  ---
+  duration_ms: 0.487996
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 131.982847
