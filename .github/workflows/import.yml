@@ -1,0 +1,66 @@
+name: Import Celesta Studio
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.bootstrap/**'
+      - '.github/workflows/import.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-celesta
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Reconstruct and verify original source
+        run: python .bootstrap/import.py
+      - name: Core tests
+        run: |
+          mkdir -p test-results
+          npm test | tee test-results/core-tests.txt
+      - name: Build standalone application
+        run: npm run build
+      - name: Verify original application checksum
+        run: |
+          python - <<'PY'
+          import hashlib, json, pathlib
+          expected = json.loads(pathlib.Path('.bootstrap/manifest.json').read_text())['standalone_sha256']
+          actual = hashlib.sha256(pathlib.Path('dist/index.html').read_bytes()).hexdigest()
+          if actual != expected:
+              raise SystemExit(f'Build checksum mismatch: {actual} != {expected}')
+          print('Verified original standalone SHA256:', actual)
+          PY
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install playwright Pillow
+          python -m playwright install --with-deps chromium
+      - name: Browser integration tests
+        run: npm run test:browser
+      - name: Commit validated source, build and reports
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .gitignore ARCHITECTURE.md LICENSE README.md build.mjs examples index.html package.json src styles.css tests dist/index.html test-results/core-tests.txt test-results/browser-report.json test-results/workspace.png
+          git diff --cached --quiet || git commit -m 'feat: add Celesta Studio vector animation editor, tests and standalone build'
+          git push origin HEAD:main
