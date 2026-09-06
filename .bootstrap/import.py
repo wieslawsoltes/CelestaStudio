@@ -34,14 +34,19 @@ text = readme.read_text(encoding='utf-8')
 text = text.replace('# Celesta Studio\n', '# Celesta Studio\n\n**[Open Celesta Studio](https://wieslawsoltes.github.io/CelestaStudio/)** · [Build and deployment](https://github.com/wieslawsoltes/CelestaStudio/actions/workflows/pages.yml)\n', 1)
 text += '\n## GitHub Pages\n\nThe `Pages` workflow validates the core and browser tests, builds the standalone application, and publishes `dist/` to GitHub Pages on pushes to `main`. Pull requests run the same checks without deploying. See [DEPLOYMENT.md](DEPLOYMENT.md) for details.\n'
 readme.write_text(text, encoding='utf-8')
-# Use the full Chromium browser and allow real-time encoder startup on CI.
-# Decode the video as well as checking that the recording contains bytes.
+# Use full Chromium and a two-second video fixture for encoder startup on CI.
+# Decode the recording rather than accepting a header-only media container.
 test = root / 'tests/browser_integration.py'
 text = test.read_text(encoding='utf-8')
-text = text.replace('import os,json,pathlib,zipfile,io,shutil', 'import os,json,pathlib,zipfile,io,shutil,base64', 1)
+text = text.replace('from playwright.sync_api import sync_playwright', 'import base64\nfrom playwright.sync_api import sync_playwright', 1)
 text = text.replace("headless=True,args=['--no-sandbox']", "channel='chromium',headless=True,args=['--no-sandbox']", 1)
-text = text.replace('celesta.doc.length=6;celesta.frame=0', 'celesta.doc.length=48;celesta.frame=0', 1)
-text = text.replace("    video=export('video');assert video.stat().st_size>200", '''    video=export('video')
+old = "    video=export('video');assert video.stat().st_size>200"
+if text.count(old) != 1:
+    raise ValueError('Unexpected video test fixture')
+text = text.replace(old, '''    data['duration']=24
+    data['layers'][0]['keys'][1]['frame']=23
+    page.evaluate('data=>celesta.replaceProject(data)',data)
+    video=export('video')
     print('Recorded video:', video.name, video.stat().st_size, 'bytes', flush=True)
     assert video.stat().st_size>200
     data_url='data:video/webm;base64,'+base64.b64encode(video.read_bytes()).decode('ascii')
@@ -52,6 +57,6 @@ text = text.replace("    video=export('video');assert video.stat().st_size>200",
       v.onerror=()=>{clearTimeout(timeout);reject(new Error('Recorded video cannot be decoded'));};
       v.src=src;v.load();
     })""",data_url)
-    assert decoded==[960,600],decoded''', 1)
+    assert decoded==[160,90],decoded''', 1)
 test.write_text(text, encoding='utf-8')
 print(f'Imported {len(files)} verified source files.')
