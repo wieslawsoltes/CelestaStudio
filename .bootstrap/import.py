@@ -34,4 +34,12 @@ text = readme.read_text(encoding='utf-8')
 text = text.replace('# Celesta Studio\n', '# Celesta Studio\n\n**[Open Celesta Studio](https://wieslawsoltes.github.io/CelestaStudio/)** · [Build and deployment](https://github.com/wieslawsoltes/CelestaStudio/actions/workflows/pages.yml)\n', 1)
 text += '\n## GitHub Pages\n\nThe `Pages` workflow validates the core and browser tests, builds the standalone application, and publishes `dist/` to GitHub Pages on pushes to `main`. Pull requests run the same checks without deploying. See [DEPLOYMENT.md](DEPLOYMENT.md) for details.\n'
 readme.write_text(text, encoding='utf-8')
+# Use full Chromium, matching local validation, rather than headless shell.
+test = root / 'tests/browser_integration.py'
+text = test.read_text(encoding='utf-8')
+old = "headless=True,args=['--no-sandbox']"
+if text.count(old) != 1:
+    raise ValueError('Unexpected browser test launch configuration')
+text = text.replace(old, "channel='chromium',headless=True,args=['--no-sandbox']", 1)
+test.write_text(text, encoding='utf-8')
 print(f'Imported {len(files)} verified source files.')
