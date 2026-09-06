@@ -1,0 +1,116 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Test and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    outputs:
+      html_sha256: ${{ steps.package.outputs.html_sha256 }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          package-manager-cache: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Core tests
+        run: |
+          mkdir -p test-results
+          npm test | tee test-results/core-tests.txt
+      - name: Build standalone application
+        run: npm run build
+      - name: Install browser test dependencies
+        run: |
+          python -m pip install -r requirements-dev.txt
+          python -m playwright install --with-deps chromium
+      - name: Browser integration tests
+        run: |
+          rm -f test-results/browser-report.json test-results/workspace.png
+          npm run test:browser
+      - name: Record deployment identity
+        id: package
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, pathlib
+          output = pathlib.Path('dist')
+          digest = hashlib.sha256((output / 'index.html').read_bytes()).hexdigest()
+          (output / '.nojekyll').touch()
+          (output / 'build-info.json').write_text(json.dumps({
+              'application': 'Celesta Studio',
+              'commit': os.environ['GITHUB_SHA'],
+              'html_sha256': digest,
+          }, indent=2) + '\n')
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as result:
+              result.write(f'html_sha256={digest}\n')
+          print('Standalone HTML SHA256:', digest)
+          PY
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            test-results/core-tests.txt
+            test-results/browser-report.json
+            test-results/workspace.png
+          retention-days: 14
+      - name: Configure GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+      - name: Upload GitHub Pages artifact
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    name: Publish and verify
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Verify public deployment
+        env:
+          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          EXPECTED_COMMIT: ${{ github.sha }}
+          EXPECTED_SHA256: ${{ needs.build.outputs.html_sha256 }}
+        run: python3 scripts/verify-deployment.py
